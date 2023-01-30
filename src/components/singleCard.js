@@ -1,9 +1,11 @@
 
 import './singleCard.css'
 
-export default function SingleCard({ card, handleChoice, flipped }) {
-  const handleClick = () => {
-    handleChoice(card) // kapalı karta tıklandığında açık resimli kartı atar. Arka yüze tıklandığında app.jsde handleChoice fonk. çalışır.
+export default function SingleCard({ card, handleChoice, flipped, disabled }) {
+  const handleClick = () => { 
+    if(!disabled){ // devre dışı değilse // bir karta tıklamaya çalışınca izin verilmeyecek
+      handleChoice(card) // kapalı karta tıklandığında açık resimli kartı atar. Arka yüze tıklandığında app.jsde handleChoice fonk. çalışır.
+    }
   }
 
   return (

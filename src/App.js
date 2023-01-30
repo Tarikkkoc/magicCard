@@ -17,6 +17,7 @@ function App() {
   const [turns, setTurns] = useState(0) // oyun turu için
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
+  const [disabled, setDisabled] = useState(false); // kartlara tıklandıktan sonra yeni bir kart açılmasın (karışıklık olmasın diye)
 
 
   // shuffle cards
@@ -26,6 +27,8 @@ function App() {
     sort(() => Math.random() - 0.5). // dizi negatif veya pozitif olacak şekilde sıralanır
     map( (card) => ({...card, id: Math.random() } )) // sıralanan dizi maplenir ve card adında dizide depolanır.
 
+    setChoiceOne(null); // oyun başladığında seçili kart olmasın
+    setChoiceTwo(null);
     setCards(shuffleCards); // boş nesne olan cards'a shuffleCards ile oluşturulan yeni nesneyi atar.
     setTurns(0);
   }
@@ -38,6 +41,7 @@ function App() {
     // compare(karşılaştır) 2 selected card
     useEffect( () => {
       if(choiceOne && choiceTwo) {
+        setDisabled(true); // kartlar karıştırılırken true
         if(choiceOne.src === choiceTwo.src){
           setCards(prevCards => {
             return prevCards.map(card => {
@@ -62,7 +66,13 @@ function App() {
       setChoiceOne(null);
       setChoiceTwo(null);
       setTurns(prevTurns => prevTurns + 1)
+      setDisabled(false); // resetlendikten sonra tekrar false
     }
+
+    // start new game automatic
+    useEffect(() => {
+      shuffleCards();
+    }, [])
 
   return (
     <div className="App">
@@ -75,9 +85,11 @@ function App() {
            card={card}
            handleChoice={handleChoice}
            flipped={card === choiceOne || card === choiceTwo || card.matched} // kartın çevrilmesi içinm gerekli olan 3 senaryo
+           disabled={disabled}
            />
           ))}
         </div>
+        <p>Turns: {turns}</p>
     </div>
   );
 }
