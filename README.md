@@ -28,6 +28,9 @@ localhost:[PORT]
 </div>
 
 
+<img src="./public/github/img2"/>
+</br>
+<img src="./public/github/img1"/>
 
 
 
