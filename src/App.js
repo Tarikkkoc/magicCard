@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import SingleCard from "./components/singleCard";
+import Popup from "reactjs-popup";
+import "reactjs-popup/dist/index.css";
 
 const cardImages = [
   { src: "/img/helmet-1.png", matched: false },
@@ -12,36 +14,42 @@ const cardImages = [
 ];
 
 function App() {
-  const [cards, setCards] = useState([]); // kartların saklanması için oluşturduğumuz değişken
-  const [turns, setTurns] = useState(0); // oyun turu için
+  const [cards, setCards] = useState([]);
+  const [turns, setTurns] = useState(0);
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
-  const [disabled, setDisabled] = useState(false); // kartlara tıklandıktan sonra yeni bir kart açılmasın (karışıklık olmasın diye)
-
-  // shuffle cards
+  const [disabled, setDisabled] = useState(false);
+  const [count, setCount] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
 
   const shuffleCards = () => {
-    // kartları karıştır.
-    const shuffleCards = [...cardImages, ...cardImages] // shuffleCards değişkenine cardImg nesnesini iki kere depoladık (2*6 = 12 olacak şekide)
-      .sort(() => Math.random() - 0.5) // dizi negatif veya pozitif olacak şekilde sıralanır
-      .map((card) => ({ ...card, id: Math.random() })); // sıralanan dizi maplenir ve card adında dizide depolanır.
+    const shuffleCards = [...cardImages, ...cardImages]
+      .sort(() => Math.random() - 0.5)
+      .map((card) => ({ ...card, id: Math.random() }));
 
-    setChoiceOne(null); // oyun başladığında seçili kart olmasın
+    setChoiceOne(null);
     setChoiceTwo(null);
-    setCards(shuffleCards); // boş nesne olan cards'a shuffleCards ile oluşturulan yeni nesneyi atar.
+    setCards(shuffleCards);
     setTurns(0);
+    setShowPopup(false);
+    setCount(0);
   };
 
-  // handle a Choice
   const handleChoice = (card) => {
-    choiceOne ? setChoiceTwo(card) : setChoiceOne(card); // chociceOne null ise false ( setChoiceOne(card) ) değeri varsa null değilse ( setChoiceTwo(card) )
+    choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
   };
 
-  // compare(karşılaştır) 2 selected card
   useEffect(() => {
-    if (choiceOne && choiceTwo) {
-      setDisabled(true); // kartlar karıştırılırken true
+    // if (count === cards.length) {
+    // } else {
+    if (cards.length !== 0 && count === cards.length) {
+      // console.log("finish", cards.length);
+      setShowPopup(true);
+    } else if (choiceOne && choiceTwo) {
+      setDisabled(true);
       if (choiceOne.src === choiceTwo.src) {
+        setCount((prevCount) => prevCount + 2);
+        // console.log("matched", count);
         setCards((prevCards) => {
           return prevCards.map((card) => {
             if (card.src === choiceOne.src) {
@@ -56,19 +64,18 @@ function App() {
         setTimeout(() => resetTurn(), 1000);
       }
     }
+    // }
   }, [choiceOne, choiceTwo]);
 
-  console.log(cards);
+  // console.log(cards);
 
-  // reset choices and increase turn
   const resetTurn = () => {
     setChoiceOne(null);
     setChoiceTwo(null);
     setTurns((prevTurns) => prevTurns + 1);
-    setDisabled(false); // resetlendikten sonra tekrar false
+    setDisabled(false);
   };
 
-  // start new game automatic
   useEffect(() => {
     shuffleCards();
   }, []);
@@ -83,12 +90,35 @@ function App() {
             key={card.id}
             card={card}
             handleChoice={handleChoice}
-            flipped={card === choiceOne || card === choiceTwo || card.matched} // kartın çevrilmesi içinm gerekli olan 3 senaryo
+            flipped={card === choiceOne || card === choiceTwo || card.matched}
             disabled={disabled}
           />
         ))}
       </div>
       <p>Turns | {turns}</p>
+      <Popup
+        open={showPopup}
+        onClose={() => setShowPopup(false)}
+        position="right center"
+        contentStyle={{
+          backgroundColor: "#c23866",
+          border: "2px solid #000",
+          borderRadius: "10px",
+          padding: "20px",
+          width: "300px",
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "20px",
+        }}
+        overlayStyle={{
+          backgroundColor: "rgba(0, 0, 0, 0.5)", // Arka planı biraz karartır
+        }}
+      >
+        <div>Congrats, you won in {turns} moves</div>
+        <button onClick={shuffleCards}>New Game</button>
+      </Popup>
     </div>
   );
 }
