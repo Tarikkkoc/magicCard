@@ -31,6 +31,8 @@ localhost:[PORT]
 <img src="./public/github/img2.jpg"/>
 </br>
 <img src="./public/github/img1.jpg"/>
+</br>
+<img src="./public/img/pop-up.png"/>
 
 
 
