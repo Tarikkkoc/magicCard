@@ -7,7 +7,7 @@ It is a 4x3 card matching game. The purpose is to find the matching cards in one
   <li>Responsive design</li>
   <li>Shuffles cards before new game</li>
 </ul>
-<p>You can visit <a href="https://tarikkoc-magic-card.netlify.app" target="_blank">https://tarikkoc-magic-card.netlify.app</a> /</p>
+<p>You can visit <a href="https://tarikkoc-magic-card.netlify.app" target="_blank">https://tarikkoc-magic-card.netlify.app</a></p>
 
 <h2>USAGE</h2>
 <p>1. Fork the repo and then clone it or download it.</p>
